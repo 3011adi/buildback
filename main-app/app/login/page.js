@@ -34,14 +34,10 @@ export default function Login() {
       const data = await res.json();
       
       if (!res.ok) {
-        if (res.status === 401) {
-          throw new Error('Invalid email or password');
-        } else {
-          throw new Error(data.message || 'Something went wrong during login');
-        }
+        throw new Error(data.message || 'Something went wrong');
       }
       
-      // Redirect to dashboard on successful login
+      // router.replace('/dashboard');
       router.push('/dashboard');
     } catch (err) {
       setError(err.message);
@@ -101,7 +97,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 border border-transparent rounded-lg shadow-md text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out font-medium text-lg disabled:bg-indigo-400 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 border border-transparent rounded-lg shadow-md text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out font-medium text-lg"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>

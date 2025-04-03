@@ -11,46 +11,26 @@ export default function Register() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
   const router = useRouter();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // Clear error when user starts typing again
-    if (error) setError('');
-  };
-
-  const validateForm = () => {
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setError('Please enter a valid email address');
-      return false;
-    }
-
-    // Password validation
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return false;
-    }
-
-    // Password matching
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return false;
-    }
-
-    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setSuccess(false);
     
-    // Validate form data
-    if (!validateForm()) {
+    // Password validation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+    
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
       setLoading(false);
       return;
     }
@@ -68,21 +48,12 @@ export default function Register() {
       });
       
       const data = await res.json();
-      
       if (!res.ok) {
-        if (res.status === 409) {
-          throw new Error('User already exists with this email');
-        } else {
-          throw new Error(data.message || 'Registration failed');
-        }
+        throw new Error(data.message || 'Registration failed');
+        console.log("Failure");
       }
       
-      setSuccess(true);
-      // Delay redirect to show success message
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 1500);
-      
+      router.push('/dashboard');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -101,12 +72,6 @@ export default function Register() {
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
             {error}
-          </div>
-        )}
-        
-        {success && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
-            Account created successfully! Redirecting...
           </div>
         )}
         
@@ -142,7 +107,6 @@ export default function Register() {
                 onChange={handleChange}
                 className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
               />
-              <p className="mt-1 text-xs text-gray-500">Must be at least 6 characters</p>
             </div>
             
             <div>
@@ -165,10 +129,10 @@ export default function Register() {
           <div>
             <button
               type="submit"
-              disabled={loading || success}
-              className="w-full py-3 px-4 border border-transparent rounded-lg shadow-md text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out font-medium text-lg disabled:bg-indigo-400 disabled:cursor-not-allowed"
+              disabled={loading}
+              className="w-full py-3 px-4 border border-transparent rounded-lg shadow-md text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300 ease-in-out font-medium text-lg"
             >
-              {loading ? 'Creating Account...' : success ? 'Account Created!' : 'Create Account'}
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </div>
         </form>

@@ -1,5 +1,4 @@
-// models/Project.js
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const ProjectSchema = new mongoose.Schema({
   userId: {
@@ -25,4 +24,4 @@ const ProjectSchema = new mongoose.Schema({
   }
 });
 
-export default mongoose.models.Project || mongoose.model('Project', ProjectSchema);
+module.exports = mongoose.models.Project || mongoose.model('Project', ProjectSchema);
